@@ -7,4 +7,6 @@ public interface UserService {
 
 	ZhonghuiResult checkData(String content, Integer type);
 	ZhonghuiResult createUser(TbUser user);
+	ZhonghuiResult userLogin(String username, String password);
+	ZhonghuiResult getUserByToken(String token);
 }

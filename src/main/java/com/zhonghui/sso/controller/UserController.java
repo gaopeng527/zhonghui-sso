@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  *
  */
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.huizhong.pojo.TbUser;
@@ -67,7 +68,7 @@ public class UserController {
 	}
 	
 	// 创建用户
-	@RequestMapping("/register")
+	@RequestMapping(value="/register", method=RequestMethod.POST)
 	@ResponseBody
 	public ZhonghuiResult createUser(TbUser user){
 		try {
@@ -75,6 +76,40 @@ public class UserController {
 			return result;
 		} catch (Exception e) {
 			return ZhonghuiResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	// 用户登录
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@ResponseBody
+	public ZhonghuiResult userLogin(String username, String password){
+		try {
+			ZhonghuiResult result = userService.userLogin(username, password);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ZhonghuiResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+	}
+	
+	@RequestMapping("/token/{token}")
+	@ResponseBody
+	public Object getUserByToken(@PathVariable String token, String callback){
+		ZhonghuiResult result = null;
+		try {
+			result = userService.getUserByToken(token);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = ZhonghuiResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
+		// 判断是否为jsonp调用
+		if(StringUtils.isBlank(callback)){
+			return result;
+		}else{
+			MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(result);
+			mappingJacksonValue.setJsonpFunction(callback);
+			return mappingJacksonValue;
 		}
 	}
 }
