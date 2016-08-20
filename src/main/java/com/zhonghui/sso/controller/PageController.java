@@ -1,6 +1,7 @@
 package com.zhonghui.sso.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 /**
  * 页面跳转Contoller
  * @author DELL
@@ -25,7 +26,8 @@ public class PageController {
 	 * @return
 	 */
 	@RequestMapping("/login")
-	public String showLogin(){
+	public String showLogin(String redirect, Model model){
+		model.addAttribute("redirect", redirect);
 		return "login";
 	}
 }
