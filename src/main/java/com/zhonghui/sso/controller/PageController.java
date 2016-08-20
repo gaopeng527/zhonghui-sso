@@ -19,4 +19,13 @@ public class PageController {
 	public String showRegister(){
 		return "register";
 	}
+	
+	/**
+	 * 登录页面
+	 * @return
+	 */
+	@RequestMapping("/login")
+	public String showLogin(){
+		return "login";
+	}
 }
