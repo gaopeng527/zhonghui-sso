@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ import com.huizhong.pojo.TbUser;
 import com.huizhong.pojo.TbUserExample;
 import com.huizhong.pojo.TbUserExample.Criteria;
 import com.zhonghui.common.pojo.ZhonghuiResult;
+import com.zhonghui.common.utils.CookieUtils;
 import com.zhonghui.common.utils.JsonUtils;
 import com.zhonghui.sso.dao.JedisClient;
 import com.zhonghui.sso.service.UserService;
@@ -69,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
 	// 用户登录
 	@Override
-	public ZhonghuiResult userLogin(String username, String password) {
+	public ZhonghuiResult userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 		TbUserExample example = new TbUserExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andUsernameEqualTo(username);
@@ -92,6 +96,10 @@ public class UserServiceImpl implements UserService {
 		jedisClient.set(key, JsonUtils.objectToJson(user));
 		// 设置session的过期时间
 		jedisClient.expire(key, SSO_SESSION_EXPIRE);
+		
+		// 添加写cookie的逻辑，cookie有效期是关闭浏览器就失效
+		CookieUtils.setCookie(request, response, "ZH_TOKEN", token);
+		
 		// 返回token
 		return ZhonghuiResult.ok(token);
 	}
