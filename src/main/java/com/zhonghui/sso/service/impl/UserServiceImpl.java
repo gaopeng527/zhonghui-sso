@@ -1,9 +1,11 @@
 package com.zhonghui.sso.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import com.huizhong.mapper.TbUserMapper;
 import com.huizhong.pojo.TbUser;
@@ -42,6 +44,16 @@ public class UserServiceImpl implements UserService {
 			return ZhonghuiResult.ok(true);
 		}
 		return ZhonghuiResult.ok(false);
+	}
+
+	@Override
+	public ZhonghuiResult createUser(TbUser user) {
+		user.setCreated(new Date());
+		user.setUpdated(new Date());
+		// md5加密
+		user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+		userMapper.insert(user);
+		return ZhonghuiResult.ok();
 	}
 
 }

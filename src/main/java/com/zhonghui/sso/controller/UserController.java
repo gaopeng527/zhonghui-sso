@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.huizhong.pojo.TbUser;
 import com.zhonghui.common.pojo.ZhonghuiResult;
 import com.zhonghui.common.utils.ExceptionUtil;
 import com.zhonghui.sso.service.UserService;
@@ -62,6 +63,18 @@ public class UserController {
 			return mappingJacksonValue;
 		}else{
 			return result;
+		}
+	}
+	
+	// 创建用户
+	@RequestMapping("/register")
+	@ResponseBody
+	public ZhonghuiResult createUser(TbUser user){
+		try {
+			ZhonghuiResult result = userService.createUser(user);
+			return result;
+		} catch (Exception e) {
+			return ZhonghuiResult.build(500, ExceptionUtil.getStackTrace(e));
 		}
 	}
 }
